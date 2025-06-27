@@ -14,7 +14,6 @@ BUILD_TYPE=Debug
 BUILD_OUTPUT="BIN"
 ONNX_TYPE="WASM"
 sysOS=$(uname -s)
-EMROOT=onnxruntime/cmake/external/emsdk/upstream/emscripten
 NUM_THREADS=1
 if [ $sysOS == "Darwin" ]; then
   #echo "I'm MacOS"
