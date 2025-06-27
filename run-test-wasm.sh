@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-source onnxruntime/cmake/external/emsdk/emsdk_env.sh
 
 sysOS=$(uname -s)
 NUM_THREADS=1
