@@ -9,7 +9,9 @@ class CrnnNet {
 public:
 
     ~CrnnNet();
-
+    
+    void setEnv(Ort::Env *env);
+    
     void setNumThread(int numOfThread);
 
     void setGpuIndex(int gpuIndex);
@@ -21,7 +23,7 @@ public:
 private:
     bool isOutputDebugImg = false;
     Ort::Session *session;
-    Ort::Env env = Ort::Env(ORT_LOGGING_LEVEL_ERROR, "CrnnNet");
+    Ort::Env *env;
     Ort::SessionOptions sessionOptions = Ort::SessionOptions();
     int numThread = 0;
 

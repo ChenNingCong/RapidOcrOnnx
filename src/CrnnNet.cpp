@@ -6,6 +6,7 @@
 #ifdef __DIRECTML__
 #include <onnxruntime/core/providers/dml/dml_provider_factory.h>
 #endif
+#include <emscripten.h>
 
 void CrnnNet::setGpuIndex(int gpuIndex) {
 #ifdef __CUDA__
@@ -42,6 +43,10 @@ CrnnNet::~CrnnNet() {
     outputNamesPtr.clear();
 }
 
+void CrnnNet::setEnv(Ort::Env *env) {
+    this->env = env;
+}
+
 void CrnnNet::setNumThread(int numOfThread) {
     numThread = numOfThread;
     //===session options===
@@ -67,9 +72,9 @@ void CrnnNet::setNumThread(int numOfThread) {
 void CrnnNet::initModel(const std::string &pathStr, const std::string &keysPath) {
 #ifdef _WIN32
     std::wstring crnnPath = strToWstr(pathStr);
-    session = new Ort::Session(env, crnnPath.c_str(), sessionOptions);
+    session = new Ort::Session(*env, crnnPath.c_str(), sessionOptions);
 #else
-    session = new Ort::Session(env, pathStr.c_str(), sessionOptions);
+    session = new Ort::Session(*env, pathStr.c_str(), sessionOptions);
 #endif
     inputNamesPtr = getInputNames(session);
     outputNamesPtr = getOutputNames(session);
@@ -163,6 +168,11 @@ std::vector<TextLine> CrnnNet::getTextLines(std::vector<cv::Mat> &partImg, const
         double endCrnnTime = getCurrentTime();
         textLine.time = endCrnnTime - startCrnnTime;
         textLines[i] = textLine;
+        MAIN_THREAD_EM_ASM({
+            var x = UTF8ToString($0);
+            Module["callback"](x);
+            console.log(x);
+        }, textLine.text.c_str());
     }
     return textLines;
 }

@@ -8,7 +8,9 @@
 class DbNet {
 public:
     ~DbNet();
-
+    
+    void setEnv(Ort::Env *env);
+    
     void setNumThread(int numOfThread);
 
     void setGpuIndex(int gpuIndex);
@@ -20,7 +22,7 @@ public:
 
 private:
     Ort::Session *session;
-    Ort::Env env = Ort::Env(ORT_LOGGING_LEVEL_ERROR, "DbNet");
+    Ort::Env *env;
     Ort::SessionOptions sessionOptions = Ort::SessionOptions();
     int numThread = 0;
 

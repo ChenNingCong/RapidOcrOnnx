@@ -26,6 +26,10 @@ DbNet::~DbNet() {
     outputNamesPtr.clear();
 }
 
+void DbNet::setEnv(Ort::Env *env) {
+    this->env = env;
+}
+
 void DbNet::setNumThread(int numOfThread) {
     numThread = numOfThread;
     //===session options===
@@ -51,9 +55,9 @@ void DbNet::setNumThread(int numOfThread) {
 void DbNet::initModel(const std::string &pathStr) {
 #ifdef _WIN32
     std::wstring detPath = strToWstr(pathStr);
-    session = new Ort::Session(env, detPath.c_str(), sessionOptions);
+    session = new Ort::Session(*env, detPath.c_str(), sessionOptions);
 #else
-    session = new Ort::Session(env, pathStr.c_str(), sessionOptions);
+    session = new Ort::Session(*env, pathStr.c_str(), sessionOptions);
 #endif
     inputNamesPtr = getInputNames(session);
     outputNamesPtr = getOutputNames(session);
@@ -131,8 +135,14 @@ DbNet::getTextBoxes(cv::Mat &src, ScaleParam &s, float boxScoreThresh, float box
     assert(inputTensor.IsTensor());
     std::vector<const char *> inputNames = {inputNamesPtr.data()->get()};
     std::vector<const char *> outputNames = {outputNamesPtr.data()->get()};
+    printf("---------- step: dbNet execute time ----------\n");
+    double startTime = getCurrentTime();
     auto outputTensor = session->Run(Ort::RunOptions{nullptr}, inputNames.data(), &inputTensor,
                                      inputNames.size(), outputNames.data(), outputNames.size());
+    double endDbNetTime = getCurrentTime();
+    double dbNetTime = endDbNetTime - startTime;
+    printf("dbNet execute time (%fms)\n", dbNetTime);
+    
     assert(outputTensor.size() == 1 && outputTensor.front().IsTensor());
     std::vector<int64_t> outputShape = outputTensor[0].GetTensorTypeAndShapeInfo().GetShape();
     int64_t outputCount = std::accumulate(outputShape.begin(), outputShape.end(), 1,

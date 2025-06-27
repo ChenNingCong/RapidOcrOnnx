@@ -1,3 +1,4 @@
+set(CMAKE_VERBOSE_MAKEFILE ON)
 if (WIN32)
     cmake_minimum_required(VERSION 3.12)
 elseif (APPLE)
@@ -37,6 +38,8 @@ elseif (OCR_ONNX STREQUAL "CUDA") # CUDA
     include(${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-gpu/OnnxRuntimeWrapper.cmake)
 elseif (OCR_ONNX STREQUAL "DIRECTML") # DIRECTML
     include(${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-DirectML/OnnxRuntimeWrapper.cmake)
+elseif (OCR_ONNX STREQUAL "WASM") # DIRECTML
+    include(${CMAKE_CURRENT_SOURCE_DIR}/onnxruntime-wasm/OnnxRuntimeWrapper.cmake)
 endif ()
 find_package(OnnxRuntime REQUIRED)
 if (OnnxRuntime_FOUND)
@@ -88,7 +91,11 @@ elseif (OCR_OUTPUT STREQUAL "CLIB") # CLIB
 elseif (OCR_OUTPUT STREQUAL "BIN") # BIN
     add_executable(RapidOcrOnnx ${OCR_COMPILE_CODE})
     target_compile_definitions(RapidOcrOnnx PRIVATE __EXEC__)
+    target_compile_options(RapidOcrOnnx PRIVATE -fexceptions -pthread)
     target_link_libraries(RapidOcrOnnx ${OnnxRuntime_LIBS} ${OpenCV_LIBS})
+    set_target_properties(RapidOcrOnnx PROPERTIES 
+    LINK_FLAGS "-O2 --preload-file ../models@models -sPROXY_TO_PTHREAD --preload-file ../images@images  -s PTHREAD_POOL_SIZE_STRICT=0 -pthread  -fexceptions  -s ALLOW_MEMORY_GROWTH=0 -s INITIAL_MEMORY=1024MB -s ALLOW_UNIMPLEMENTED_SYSCALLS=1 -s WASM=1 -s USE_OFFSET_CONVERTER=1 -s STACK_SIZE=50MB -s STACK_OVERFLOW_CHECK=0 -s SAFE_HEAP=0 -s WASM_BIGINT=1 -s EXPORTED_RUNTIME_METHODS=\"callMain\",\"FS\""
+    )
 endif ()
 
 install(TARGETS RapidOcrOnnx EXPORT RapidOcrOnnx)

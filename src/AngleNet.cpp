@@ -41,6 +41,10 @@ AngleNet::~AngleNet() {
     outputNamesPtr.clear();
 }
 
+void AngleNet::setEnv(Ort::Env *env) {
+    this->env = env;
+}
+
 void AngleNet::setNumThread(int numOfThread) {
     numThread = numOfThread;
     //===session options===
@@ -66,9 +70,9 @@ void AngleNet::setNumThread(int numOfThread) {
 void AngleNet::initModel(const std::string &pathStr) {
 #ifdef _WIN32
     std::wstring clsPath = strToWstr(pathStr);
-    session = new Ort::Session(env, clsPath.c_str(), sessionOptions);
+    session = new Ort::Session(*env, clsPath.c_str(), sessionOptions);
 #else
-    session = new Ort::Session(env, pathStr.c_str(), sessionOptions);
+    session = new Ort::Session(*env, pathStr.c_str(), sessionOptions);
 #endif
     inputNamesPtr = getInputNames(session);
     outputNamesPtr = getOutputNames(session);

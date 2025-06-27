@@ -4,6 +4,13 @@
 
 OcrLiteImpl::OcrLiteImpl() {
     loggerBuffer = (char *)malloc(8192);
+    Ort::GetApi().CreateThreadingOptions(&threading_options);
+    Ort::GetApi().SetGlobalInterOpNumThreads(threading_options, 2);
+    Ort::GetApi().SetGlobalIntraOpNumThreads(threading_options, 2);
+    env = std::make_unique<Ort::Env>(threading_options, ORT_LOGGING_LEVEL_ERROR, "global");
+    dbNet.setEnv(env.get());
+    angleNet.setEnv(env.get());
+    crnnNet.setEnv(env.get());
 }
 
 OcrLiteImpl::~OcrLiteImpl() {

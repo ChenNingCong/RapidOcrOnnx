@@ -48,6 +48,8 @@ private:
     bool isOutputResultTxt = false;
     bool isOutputResultImg = false;
     FILE *resultTxt;
+    OrtThreadingOptions *threading_options;
+    std::unique_ptr<Ort::Env> env;
     DbNet dbNet;
     AngleNet angleNet;
     CrnnNet crnnNet;
