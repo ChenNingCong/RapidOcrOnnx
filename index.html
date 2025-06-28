@@ -1,0 +1,26 @@
+<script>
+    var Module = {
+        noInitialRun: true, // Prevent automatic main() execution
+        // Other Module settings if needed
+    };
+    Module['locateFile'] = function (path, prefix) {
+        // if it's a mem init file, use a custom dir
+        if (path.endsWith(".data")) return "./Linux-WASM-BIN/" + path;
+        // otherwise, use the default, the prefix (JS file's dir) + the path
+        return prefix + path;
+    }
+    Module['callback'] = function (x) {
+        console.log(x)
+        console.log("CALLBACK")
+    }
+    Module['onRuntimeInitialized'] = function() {
+        console.log("begin")
+        Module.callMain(["--models", "models", "--det", "ch_PP-OCRv3_det_infer.onnx", "--cls", "ch_ppocr_mobile_v2.0_cls_infer.onnx", "--rec", "ch_PP-OCRv3_rec_infer.onnx", "--keys", "ppocr_keys_v1.txt", "--image", "images/1.jpg", "--padding", "50", "--maxSideLen", "1024", "--boxScoreThresh", "0.5", "--boxThresh", "0.3", "--unClipRatio", "1.6", "--doAngle", "1", "--mostAngle", "1", "-t", "8", "-G", "-1"])
+    };
+</script>
+
+
+<script src="./Linux-WASM-BIN/RapidOcrOnnx.js"></script>
+<script>
+
+</script>
