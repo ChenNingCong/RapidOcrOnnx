@@ -94,7 +94,7 @@ elseif (OCR_OUTPUT STREQUAL "BIN") # BIN
     target_compile_options(RapidOcrOnnx PRIVATE -fexceptions -pthread)
     target_link_libraries(RapidOcrOnnx ${OnnxRuntime_LIBS} ${OpenCV_LIBS})
     set_target_properties(RapidOcrOnnx PROPERTIES 
-    LINK_FLAGS "-O2 --preload-file ../models@models -sPROXY_TO_PTHREAD --preload-file ../images@images  -s PTHREAD_POOL_SIZE_STRICT=0 -pthread  -fexceptions  -s ALLOW_MEMORY_GROWTH=0 -s INITIAL_MEMORY=1024MB -s ALLOW_UNIMPLEMENTED_SYSCALLS=1 -s WASM=1 -s USE_OFFSET_CONVERTER=1 -s STACK_SIZE=50MB -s STACK_OVERFLOW_CHECK=0 -s SAFE_HEAP=0 -s WASM_BIGINT=1 -s EXPORTED_RUNTIME_METHODS=\"callMain\",\"FS\""
+    LINK_FLAGS "-O0 --preload-file ../models@models -sPROXY_TO_PTHREAD --preload-file ../images@images  -s PTHREAD_POOL_SIZE_STRICT=0 -pthread  -fexceptions  -s ALLOW_MEMORY_GROWTH=0 -s INITIAL_MEMORY=1024MB -s ALLOW_UNIMPLEMENTED_SYSCALLS=1 -s WASM=1 -s USE_OFFSET_CONVERTER=1 -s STACK_SIZE=50MB -s STACK_OVERFLOW_CHECK=0 -s SAFE_HEAP=0 -s WASM_BIGINT=1 -s EXPORTED_RUNTIME_METHODS=\"callMain\",\"FS\""
     )
 endif ()
 
